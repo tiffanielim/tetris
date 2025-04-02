@@ -1,0 +1,3 @@
+/Users/tiffanielim/CLionProjects/CS3A_Tetris/cmake-build-debug/CMakeFiles/CS3A_Tetris.dir
+/Users/tiffanielim/CLionProjects/CS3A_Tetris/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/tiffanielim/CLionProjects/CS3A_Tetris/cmake-build-debug/CMakeFiles/rebuild_cache.dir

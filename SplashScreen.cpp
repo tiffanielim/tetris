@@ -5,15 +5,16 @@
 #include "SplashScreen.h"
 
 SplashScreen::SplashScreen(float width, float height) {
-    if (!splashTexture.loadFromFile("Images/TetrisImage.png")) {
+    //load splash image
+    if (!splashTexture.loadFromFile("Images/TetrisImage.png"))
+        std::cerr << "Error: Failed to load splash image from 'Images/TetrisImage.png'" << std::endl;
 
-    }
     splashSprite.setTexture(splashTexture);
 
-    if (!font.loadFromFile("Fonts/Minecraft.ttf")) {
+    if (!font.loadFromFile("Fonts/Minecraft.ttf"))
+        std::cerr << "Error: Failed to load font from 'Fonts/Minecraft.ttf'" << std::endl;
 
-    }
-
+    ///setting up
     title.setFont(font);
     title.setString("Tiffanie Lim - Spr24_CS003A_37045");
     title.setCharacterSize(50);
@@ -27,15 +28,17 @@ SplashScreen::SplashScreen(float width, float height) {
     startButton.setPosition(sf::Vector2f(width / 2 - startButton.getLocalBounds().width / 2, height / 2));
 }
 
-void SplashScreen::Render(sf::RenderWindow &window) {
+void SplashScreen::Render(sf::RenderWindow &window)
+{
     window.draw(splashSprite);
     window.draw(title);
     window.draw(startButton);
 }
 
-bool SplashScreen::HandleEvent(sf::Event &event) {
-    if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Enter) {
-        return true; // Signal to transition to the game state
-    }
+bool SplashScreen::HandleEvent(sf::Event &event)
+{
+    if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Enter)
+        return true; //signal to go to the game state
+
     return false;
 }

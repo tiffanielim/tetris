@@ -2,6 +2,9 @@
 // Created by Tiffanie Lim on 6/3/24.
 //
 
+///Represents the game board where tetrominoes fall and interact
+///Handles spawning, moving, placing blocks, clearing lines, and rendering
+
 #ifndef CS3A_TETRIS_FIELD_H
 #define CS3A_TETRIS_FIELD_H
 #include <SFML/Graphics.hpp>
@@ -17,15 +20,15 @@ namespace te
     public:
         Field(int tileSize);
 
-        void SetPosition(int x, int y);
+        void SetPosition(int x, int y); //set board's screen position
         void Spawn(Block::Type t);
         void PlaceBlock();
-        inline std::queue<Block::Type> GetQueue() { return queue; }
-        void Reset();
+        inline std::queue<Block::Type> GetQueue() { return queue; } //get upcoming blocks
+        void Reset(); //clear map and refill block queue
 
-        void OnEvent(sf::Event e);
-        void OnUpdate();
-        void Render(sf::RenderTarget& wnd);
+        void OnEvent(sf::Event e); //handle keyboard input
+        void OnUpdate(); //advance block downward, place it if needed
+        void Render(sf::RenderTarget& wnd); //draw current state of board
 
     private:
         sf::VertexBuffer grid;

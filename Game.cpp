@@ -17,6 +17,7 @@ namespace te
         windowHeight = h;
         currentState = State::Splash;
 
+        //load and set splash screen image
         if (!splashTexture.loadFromFile("Images/TetrisImage.png"))
         {
             std::cerr << "Failed to load splash image" << std::endl;
@@ -25,21 +26,25 @@ namespace te
         splashSprite.setScale(0.45f, 0.45f);
         splashSprite.setPosition(windowWidth / 2 - splashSprite.getGlobalBounds().width / 2, 50);
 
+        //load and set font
         if (!font.loadFromFile("Fonts/Minecraft.ttf"))
         {
             std::cerr << "Failed to load font" << std::endl;
         }
 
+        //set name tag text on splash screen
         nameText.setFont(font);
         nameText.setString("Tiffanie Lim - Spr24_CS003A_37045");
         nameText.setCharacterSize(25);
         nameText.setFillColor(sf::Color::White);
         nameText.setPosition(windowWidth / 2 - nameText.getGlobalBounds().width / 2, windowHeight/2 + 300);
 
+        //set up start button appearance and position
         startButton.setSize(sf::Vector2f(200, 50));
         startButton.setFillColor(sf::Color(255, 204, 229));
         startButton.setPosition(windowWidth / 2 - startButton.getSize().x / 2, 550);
 
+        //set up "Start" button label
         startButtonText.setFont(font);
         startButtonText.setString("Start");
         startButtonText.setCharacterSize(30);
@@ -58,17 +63,18 @@ namespace te
                 sf::FloatRect startButtonBounds = startButton.getGlobalBounds();
                 sf::Vector2i mousePosition = sf::Mouse::getPosition(window); // set mouse position relative to a window
 
+                //check if click is inside button area
                 if (startButtonBounds.contains(static_cast<float>(mousePosition.x), static_cast<float>(mousePosition.y)))
                 {
                     currentState = State::Playing;
-                    //reset timePassed and fieldClock when starting the game
                     timePassed = 0.f;
-                    fieldClock.restart();
+                    fieldClock.restart(); //reset drop timer
                 }
             }
         }
         else if (currentState == State::Playing)
         {
+            //handle soft drop speed toggle
             if (e.type == sf::Event::KeyPressed)
             {
                 sf::Keyboard::Key kc = e.key.code;
@@ -84,6 +90,7 @@ namespace te
                     updateSpeed = NORMAL_SPEED;
             }
 
+            //pass movement/rotation keys to field
             field.OnEvent(e);
         }
     }
@@ -92,8 +99,8 @@ namespace te
     {
         if (currentState == State::Playing)
         {
-            timePassed += fieldClock.restart().asSeconds();
-            while (timePassed >= updateSpeed)
+            timePassed += fieldClock.restart().asSeconds(); //track time since last drop
+            while (timePassed >= updateSpeed) //if enough time passed, update field logic
             {
                 field.OnUpdate();
                 timePassed -= updateSpeed;
@@ -115,22 +122,22 @@ namespace te
             sf::RectangleShape bg;
             bg.setFillColor(sf::Color(30, 30, 30));
 
-            // next figures bg
+            //draw background for upcoming queue area
             bg.setPosition(BG_MARGIN, BG_MARGIN);
             bg.setSize(sf::Vector2f(1.f / 3.f * (windowWidth - BG_MARGIN * 3), windowHeight - BG_MARGIN * 2));
             wnd.draw(bg);
 
-            // figure queue
+            //draw upcoming block queue
             sf::Vector2f qOffset = bg.getPosition();
             std::queue<Block::Type> blocks = field.GetQueue();
-            int queueTileSize = bg.getSize().x / 6.f; // 1 margin + 4 tiles + 1 margin == 6 (horizontal)
-            int vertSlots = (bg.getSize().y / queueTileSize) / 5; // 1 margin + 4 tiles == 5 (vertical)
+            int queueTileSize = bg.getSize().x / 6.f; //width split into 6 (1 margin + 4 tiles + 1 margin)
+            int vertSlots = (bg.getSize().y / queueTileSize) / 5;  //height divided into blocks (1 margin + 4 tiles)
             for (int i = 0; i <= std::min<int>(vertSlots, QUEUE_SIZE); i++)
             {
                 Block::Type type = blocks.front();
                 blocks.pop();
 
-                //centers all block types
+                //center non-I and non-O blocks
                 float multiplier = 1.f;
                 if (type != Block::Type::I && type != Block::Type::O)
                     multiplier = 0.5f;
@@ -138,12 +145,12 @@ namespace te
                 Block::Render(wnd, type, qOffset.x + queueTileSize * multiplier, qOffset.y + i * queueTileSize * 5, queueTileSize, 0);
             }
 
-            // field bg
+            //draw background behind actual tetris field
             bg.setPosition(20 + bg.getSize().x + BG_MARGIN, BG_MARGIN);
             bg.setSize(sf::Vector2f(2.f / 3.f * (windowWidth - BG_MARGIN * 3), windowHeight - BG_MARGIN * 2));
             wnd.draw(bg);
 
-            // draw field
+            //update field’s drawing position and render it
             field.SetPosition(bg.getPosition().x, bg.getPosition().y);
             field.Render(wnd);
         }
